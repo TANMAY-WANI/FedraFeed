@@ -1,0 +1,9 @@
+.cards{
+    display: grid;
+    place-items: center;
+
+    .card{
+        margin: 2rem;
+    }
+
+}

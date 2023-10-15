@@ -5,9 +5,12 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from "react-router-dom";
+
 
 
 const  Signup = ({ show, setShow }) => {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
     const [otp, setOtp] = useState("");
     const [otpBox, openOtpBox] = useState(false);
@@ -63,6 +66,7 @@ const  Signup = ({ show, setShow }) => {
                 console.log("Successfully submitted");
                 console.log(user);
                 // submitInfo();
+                navigate('/home')
             }).catch((error) => {
                 console.log(error);
             });

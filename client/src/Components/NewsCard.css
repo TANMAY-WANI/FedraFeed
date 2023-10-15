@@ -4,7 +4,8 @@
     place-items: center;
     width:max(60vw,min(800px,100%));
     padding:1rem;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12)
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+    position: relative;
 }
 
 img{
@@ -14,7 +15,7 @@ img{
 }
 
 @media screen and (max-width: 600px){
-    .card{
+    .Ncard{
         grid-template-columns: 1fr;
     }
     img{
@@ -36,7 +37,7 @@ img{
     }
 }
 
-.card-content button svg:hover{
+.Ncard-content button svg:hover{
     /* :hover{
         color:pink;
     } */

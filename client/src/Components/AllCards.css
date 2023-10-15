@@ -1,8 +1,8 @@
-.cards{
+.Ncards{
     display: grid;
     place-items: center;
 
-    .card{
+    .Ncard{
         margin: 2rem;
     }
 

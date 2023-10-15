@@ -52,7 +52,7 @@ function AllCards() {
         setPage(page+1);
     }
     return (<>
-        <div className="cards">
+        <div className="Ncards">
             {data.map((each, index) => {
                 return <NewsCard key={index} liked={liked[index]} onReadMore={()=>onReadMore(index)} onLike={()=>handleLike(index)}  {...each} />;
             })}

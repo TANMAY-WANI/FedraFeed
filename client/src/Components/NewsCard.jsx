@@ -1,7 +1,7 @@
 import "./NewsCard.css"
 function NewsCard(props) {
   return (<>
-    <div className="card">
+    <div className="Ncard">
         <img  src={props.imageLink} alt="News" />
         <div className="card-content">
             <h3>{props.headline}</h3>

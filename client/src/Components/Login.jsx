@@ -1,7 +1,8 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-
+import { useState } from 'react';
+import axios from 'axios';
 function Login({show,setShow}) {
 
     //state variables
@@ -82,6 +83,7 @@ function Login({show,setShow}) {
             <Form.Group className="mb-3" controlId="SignupForm.ControlInput1">
             <Form.Label>Phone Number</Form.Label>
             <Form.Control
+                autoComplete='phone'
                 type="number"
                 autoFocus
               />

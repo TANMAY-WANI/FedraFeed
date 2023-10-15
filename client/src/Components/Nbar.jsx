@@ -71,7 +71,7 @@ function Nbar() {
         <Container>
           <Navbar.Collapse className='justify-content-center'>
             <Nav>
-              <Navbar.Brand href="#home"><img src="logo.png" alt="" height={30} width={150} /></Navbar.Brand>
+              <Navbar.Brand href="./#home"><img src="logo.png" alt="" height={30} width={150} /></Navbar.Brand>
             </Nav>
           </Navbar.Collapse>
         </Container>

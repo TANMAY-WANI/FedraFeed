@@ -86,12 +86,14 @@ const  Signup = ({ show, setShow }) => {
             <Form.Control
                 type="text"
                 autoFocus
+                autoComplete="name"
                 onChange={(event)=>{setName(event.target.value)}}
               />
             <Form.Label>Phone Number</Form.Label>
             <Form.Control
                 type="number"
                 autoFocus
+                autoComplete="phone"
                 onChange={(event)=>{setphNo(event.target.value)}}
               />
               

@@ -1,4 +1,4 @@
-.card{
+.Ncard{
     display: grid;
     grid-template-columns: 1fr 2fr;
     place-items: center;

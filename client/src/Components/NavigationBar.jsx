@@ -14,10 +14,10 @@ function NavigationBar() {
     <>
       <Navbar bg="dark" data-bs-theme="dark">
         <Container>
-          <Navbar.Brand href="#home">FedraFeed</Navbar.Brand>
+          <Navbar.Brand href="./#home">FedraFeed</Navbar.Brand>
           <Navbar.Collapse className='justify-content-end'>
           <Nav>
-            <Nav.Link href="#home" onClick={handleSignUp}>Sign Up</Nav.Link>
+            <Nav.Link href="./#home" onClick={handleSignUp}>Sign Up</Nav.Link>
             <Nav.Link href="#features" onClick={handleLogIn}>Log In</Nav.Link>
           </Nav>
           </Navbar.Collapse>

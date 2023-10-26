@@ -1,7 +1,7 @@
 import mysql.connector as sqltor
 def create_tables():
     try :
-        conn = sqltor.connect(host ="localhost",user="root",password="21BCP095",database="fedrafeed")
+        conn = sqltor.connect(host ="localhost",user="root",password="66121200",database="fedrafeed")
         if conn.is_connected():
             print("Successfully Connected !!")
             cur = conn.cursor()

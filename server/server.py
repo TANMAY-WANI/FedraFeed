@@ -1,130 +1,47 @@
-from flask import Flask, jsonify,request
+from flask import Flask, jsonify,request, g
 import requests
 import csv
 from flask_cors import CORS, cross_origin
 import random
-import os
-import time
 import mysql.connector as sqltor
-
-try :
-    conn = sqltor.connect(host ="localhost",user="root",password="66121200",database="fedrafeed")
-    if conn.is_connected():
-        print("Successfully Connected !!")
-        cur=conn.cursor()
-    else:
-        print("Failed to connect")
-except Exception as e:
-    print("Error :",str(e))
-
-def create_tables():
-    cmd1 = '''create table users(
-        user_id int not null auto_increment primary key,
-        name varchar(20),
-        email varchar(50) not null,
-        phone varchar(10) not null,
-        password varchar(20) not null)'''
-    
-    cmd2 = '''create table saved_news(
-    user_id int not null,
-    news_headline varchar(100) not null,
-    img_url varchar(100) not null,
-    news_body varchar(300) not null,
-    news_url varchar(100) not null,
-    foreign key (user_id) references users(user_id)
-    )'''
-
-    cmd3 = '''create table user_preferences(
-    user_id int not null,
-    Politics int not null default 0,
-    Sports int not null default 0,
-    Technology int not null default 0,
-    Entertainment int not null default 0,
-    National int not null default 0,
-    foreign key (user_id) references users(user_id)
-    )'''
-    cur.execute(cmd1)
-    cur.execute(cmd2)
-    cur.execute(cmd3)
-    conn.commit()
-    print("table created")
-
-def  insertUser(user_data):
-    try:
-        name = user_data['name']
-        email = user_data['email']
-        phone = user_data['phone']
-        password = user_data['password']
-        cmd1 = "insert into users(name,email,phone,password) values(%s, %s, %s, %s)"
-        cmd2 = 'select user_id from users where phone = %s'
-        cmd3 = 'insert into user_preferences (user_id) values(%s)'
-
-        data = (name,email,phone,password)
-        cur.execute(cmd1,data)
-        cur.execute(cmd2,(phone,))
-        output = cur.fetchone()
-
-        cur.execute(cmd3,(output[0],))
-        conn.commit()
-        return output[0]
-    except Exception as e:
-        print("Error :",str(e))
-
-def insert_saved_news(news_data):
-    try:
-        user_id = news_data['user_id']
-        news_headline = news_data['news_headline']
-        img_url = news_data['img_url']
-        news_body = news_data['news_body']
-        news_url = news_data['news_url']
-        cmd = "insert into saved_news(user_id,news_headline,img_url,news_body,news_url) values(%s, %s, %s, %s, %s)"
-        data = (user_id,news_headline,img_url,news_body,news_url)
-        cur.execute(cmd,data)
-        conn.commit()
-        print("Data inserted")
-
-    except Exception as e:
-        print("Error :",str(e))
-
-def insert_user_preferences(user_preferences_data):
-    try:
-        user_id = user_preferences_data['user_id']
-        category = user_preferences_data['category']
-        cmd = f"UPDATE user_preferences SET {category} = {category} + 1 WHERE user_id = %s"
-        cur.execute(cmd,(user_id,))
-        conn.commit()
-        print("Data inserted")
-    except Exception as e:
-        print("Error :",str(e))
-
-
-pref_data = {
-    'user_id':'1',
-    'category':'Politics'
-}
-# create_tables()
-user_data = {
-    'name':'Tanmay',
-    'email':'tanmay@gmail.com',
-    'phone':'9104332789',
-    'password':'1234'
-
-}
-
-news_data = {
-    'user_id':'1',
-    'news_headline':'Tanmay',
-    'img_url':'Hello world',
-    'news_body':'9104332789',
-    'news_url':'1234'
-}
 
 
 app = Flask(__name__)
 CORS(app, support_credentials=True, origins='*')
+# Database configuration
 
 
-csv_filename = 'data_scraper.csv'
+
+# pref_data = {
+#     'user_id':'1',
+#     'category':'Politics'
+# }
+# user_data = {
+#     'name':'Tanmay',
+#     'email':'tanmay@gmail.com',
+#     'phone':'9104332789',
+#     'password':'1234'
+
+# }
+# news_data = {
+#     'user_id':'1',
+#     'news_headline':'Tanmay',
+#     'img_url':'Hello world',
+#     'news_body':'9104332789',
+#     'news_url':'1234'
+# }
+
+
+
+# applying CORS to blueprints
+import Routes.user
+import Routes.news
+CORS(Routes.user.userBP, support_credentials=True, origins='*')
+CORS(Routes.news.newsBP, support_credentials=True, origins='*')
+
+# Registering the blueprints for the routes
+app.register_blueprint(Routes.user.userBP, url_prefix='/user')
+app.register_blueprint(Routes.news.newsBP, url_prefix='/news')
 
 def create_table():
     try :
@@ -135,37 +52,9 @@ def create_table():
             print("Failed to connect")
     except Exception as e:
         print("Error :",str(e))
-    
-# import sqlite3
-# con = sqlite3.connect("fedra_feed.db")
-# cur = con.cursor()
-
-# def create_database():
-#     cur.execute("""CREATE TABLE USERS(
-#             NAME VARCHAR,
-#             EMAIL VARCHAR NOT NULL,
-#             PHONE VARCHAR NOT NULL PRIMARY KEY,
-#             PASSWORD VARCHAR NOT NULL)""")
-
-# def insert_data(usr_info):
-#     cur.execute("INSERT INTO USERS VALUES(?,?,?,?)",usr_info)
-
-# def check_user(phone):
-#     cur.execute("SELECT PHONE FROM USERS WHERE PHONE = ?",(phone))
-#     if cur.fetchone() is None:
-#         return False
-#     else:
-#         return True
-    
 
 # Function to retrieve news headlines from the CSV file
-def read_headlines_from_csv():
-    headlines = []
-    with open(csv_filename,  'r', encoding = 'cp850', newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            headlines.append(row)
-    return headlines
+
 
 
 # @app.route('/signup',methods= ['POST'])
@@ -185,55 +74,6 @@ def read_headlines_from_csv():
 #     else:
 #         return jsonify({'result': 'error'})
 
-
-# API endpoint to get all news headlines
-@app.route('/api/news', methods=['GET'])
-@cross_origin(supports_credentials=True)
-def get_all_news():
-    headlines = read_headlines_from_csv()
-    return jsonify({'headlines': headlines})
-
-# API endpoint to get 10 news headlines
-@app.route('/api/randnews/<int:index>', methods=['GET'])
-@cross_origin(supports_credentials=True)
-def get_rand_news(index):
-    headlines = read_headlines_from_csv()
-    randomHeadlines=[]
-    randomNumbers=[]
-    while len(randomNumbers)<index:
-        randomNum = random.randint(0, len(headlines)-1)
-        if randomNum not in randomNumbers:
-            randomNumbers.append(randomNum)
-            randomHeadlines.append(headlines[randomNum])
-    
-    return jsonify({'headlines': randomHeadlines})
-
-# API endpoint to get a specific news headline by index
-@app.route('/api/news/<int:index>', methods=['GET'])
-def get_news_by_index(index):
-    headlines = read_headlines_from_csv()
-    if 0 <= index < len(headlines):
-        return jsonify(headlines[index])
-    else:
-        return jsonify({'message': 'News not found'}), 404
-
-# @app.route('/api/chatroom',methods = ['POST'])
-# def chatroom():
-#     responce = requests.get('https://api.chatengine.io/users/me',
-#                             headers={
-#                                 "Project-ID":os.environ['CHAT_ENGINE_PROJECT_ID'],
-#                                 "User-Name":"Tanmay",
-                                
-#                             })
-
-
-@app.route('/addUser',methods = ['POST'])
-@cross_origin(supports_credentials=True)
-def signup():
-    data = request.get_json()
-    userid=insertUser(data)
-
-    return jsonify({'result': 'successfully signed up'})
 
 
 @app.route('/api/payments',methods = ['POST'])

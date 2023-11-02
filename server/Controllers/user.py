@@ -1,4 +1,9 @@
+import datetime
 import mysql.connector as sqltor
+from flask import request, jsonify, make_response
+from  werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+import os
 conn  = sqltor.connect(host="localhost", user="root", password="66121200", database="FEDRAFEED")
 cur = conn.cursor()
 def  insertUser(user_data):
@@ -7,11 +12,12 @@ def  insertUser(user_data):
         email = user_data['email']
         phone = user_data['phone']
         password = user_data['password']
+        hashed=generate_password_hash(password)
         cmd1 = "insert into users(name,email,phone,password) values(%s, %s, %s, %s)"
         cmd2 = 'select user_id from users where phone = %s'
         cmd3 = 'insert into user_preferences (user_id) values(%s)'
 
-        data = (name,email,phone,password)
+        data = (name,email,phone,hashed)
         cur.execute(cmd1,data)
         cur.execute(cmd2,(phone,))
         output = cur.fetchone()
@@ -49,3 +55,43 @@ def insert_user_preferences(user_preferences_data):
     except Exception as e:
         print("Error :",str(e))
 
+# def get_user_from_id():
+def get_user_from_email():
+    print("Inside get_user_from_email")
+
+def login():
+    # creates dictionary of form data
+    auth = request.form
+  
+    if not auth or not auth.get('email') or not auth.get('password'):
+        # returns 401 if any email or / and password is missing
+        return make_response(
+            'Could not verify',
+            401,
+            {'WWW-Authenticate' : 'Basic realm ="Login required !!"'}
+        )
+  
+    user = get_user_from_email(auth.get('email'))
+  
+    if not user:
+        # returns 401 if user does not exist
+        return make_response(
+            'Could not verify',
+            401,
+            {'WWW-Authenticate' : 'Basic realm ="User does not exist !!"'}
+        )
+  
+    if check_password_hash(user.password, auth.get('password')):
+        # generates the JWT Token
+        token = jwt.encode({
+            'public_id': user.public_id,
+            'exp' : datetime.utcnow() + datetime.timedelta(minutes = 60)
+        }, os.getenv('SECRET_KEY'))
+  
+        return make_response(jsonify({'token' : token.decode('UTF-8')}), 201)
+    # returns 403 if password is wrong
+    return make_response(
+        'Could not verify',
+        403,
+        {'WWW-Authenticate' : 'Basic realm ="Wrong Password !!"'}
+    )

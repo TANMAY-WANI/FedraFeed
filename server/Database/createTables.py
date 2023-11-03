@@ -1,12 +1,14 @@
-from server import conn, cur
+import mysql.connector as sqltor
 
+conn  = sqltor.connect(host="localhost", user="root", password="66121200", database="FEDRAFEED")
+cur = conn.cursor()
 def create_tables():
     cmd1 = '''create table users(
         user_id int not null auto_increment primary key,
         name varchar(20),
         email varchar(50) not null,
         phone varchar(10) not null,
-        password varchar(20) not null)'''
+        password varchar(500) not null)'''
     
     cmd2 = '''create table saved_news(
     user_id int not null,
@@ -31,3 +33,6 @@ def create_tables():
     cur.execute(cmd3)
     conn.commit()
     print("table created")
+
+if __name__ == '__main__':
+    create_tables()

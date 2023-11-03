@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, Request
 from Controllers.news import read_headlines_from_csv
 from Controllers.news import get_rand_news
-
+import Middleware.auth as mid
 
 newsBP = Blueprint('news',__name__)
 
@@ -11,9 +11,12 @@ def get_all_news():
     return jsonify({'headlines': headlines})
 
 # API endpoint to get 10 news headlines
+
 @newsBP.route('randnews/<int:index>', methods=['GET'])
+@mid.token_required
 def rand_news_route(index):
-    get_rand_news(index)
+    news=get_rand_news(index)
+    return jsonify({'headlines':news})
     
 
 # API endpoint to get a specific news headline by index

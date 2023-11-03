@@ -1,5 +1,7 @@
+import json
 from flask import Blueprint, jsonify, request
-from Controllers.user import insertUser , insert_saved_news , insert_user_preferences
+from Controllers.user import insertUser , insert_saved_news , insert_user_preferences, login
+
 userBP = Blueprint('user',__name__)
 
 @userBP.route('/addUser',methods = ['POST'])
@@ -19,4 +21,11 @@ def addUserPreferences():
     data = request.get_json()
     insert_user_preferences(data)
     return jsonify({'result': 'successfully inserted'}), 200
+
+@userBP.route('/login',methods = ['POST'])
+def loginRoute():
+    data = request.get_json()
+    res=login(data['phone'],data['password'])
+    return res
+
 

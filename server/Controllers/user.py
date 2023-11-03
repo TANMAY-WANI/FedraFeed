@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 import mysql.connector as sqltor
 from flask import request, jsonify, make_response
 from  werkzeug.security import generate_password_hash, check_password_hash
@@ -59,11 +59,20 @@ def insert_user_preferences(user_preferences_data):
 def get_user_from_email():
     print("Inside get_user_from_email")
 
-def login():
+def get_user_from_phone(phone):
+    cmd = "SELECT password FROM users WHERE phone = %s"
+    cur.execute(cmd, (phone,))
+    user = cur.fetchone()
+    if user == None:
+        print("User not found")
+        return None
+    print("Fetched user successfully")
+    return user[0]
+
+def login(phone,password):
     # creates dictionary of form data
-    auth = request.form
   
-    if not auth or not auth.get('email') or not auth.get('password'):
+    if not phone or not password:
         # returns 401 if any email or / and password is missing
         return make_response(
             'Could not verify',
@@ -71,7 +80,9 @@ def login():
             {'WWW-Authenticate' : 'Basic realm ="Login required !!"'}
         )
   
-    user = get_user_from_email(auth.get('email'))
+    user = get_user_from_phone(phone)
+    print(user)
+    print(password)
   
     if not user:
         # returns 401 if user does not exist
@@ -81,16 +92,16 @@ def login():
             {'WWW-Authenticate' : 'Basic realm ="User does not exist !!"'}
         )
   
-    if check_password_hash(user.password, auth.get('password')):
+    if check_password_hash(user, password):
         # generates the JWT Token
         token = jwt.encode({
-            'public_id': user.public_id,
-            'exp' : datetime.utcnow() + datetime.timedelta(minutes = 60)
-        }, os.getenv('SECRET_KEY'))
+            'id': str(phone),
+            'exp' : str(datetime.utcnow() + timedelta(minutes = 60))
+        }, str(os.getenv('SECRET_KEY')))
   
-        return make_response(jsonify({'token' : token.decode('UTF-8')}), 201)
+        return make_response(jsonify({'token' : token}), 201)
     # returns 403 if password is wrong
-    return make_response(
+    else: return make_response(
         'Could not verify',
         403,
         {'WWW-Authenticate' : 'Basic realm ="Wrong Password !!"'}

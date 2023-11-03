@@ -10,7 +10,6 @@ def read_headlines_from_csv():
             headlines.append(row)
     return headlines
 # API endpoint to get all news headlines
-
 def get_rand_news(index):
     headlines = read_headlines_from_csv()
     randomHeadlines=[]
@@ -21,4 +20,4 @@ def get_rand_news(index):
             randomNumbers.append(randomNum)
             randomHeadlines.append(headlines[randomNum])
     
-    return jsonify({'headlines': randomHeadlines})
+    return randomHeadlines

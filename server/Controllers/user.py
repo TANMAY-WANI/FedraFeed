@@ -96,7 +96,7 @@ def login(phone,password):
         # generates the JWT Token
         token = jwt.encode({
             'id': str(phone),
-            'exp' : str(datetime.utcnow() + timedelta(minutes = 60))
+            'exp' : datetime.utcnow() + timedelta(minutes = 60)
         }, str(os.getenv('SECRET_KEY')))
   
         return make_response(jsonify({'token' : token}), 201)

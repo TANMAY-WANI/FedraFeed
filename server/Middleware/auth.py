@@ -10,17 +10,19 @@ def token_required(f):
         # jwt is passed in the request header
         if 'x-access-token' in request.headers:
             token = request.headers['x-access-token']
+        print(token)
         # return 401 if token is not passed
         if not token:
             return jsonify({'message' : 'Token is missing !!'}), 401
   
         try:
             # decoding the payload to fetch the stored details
-            data = jwt.decode(token, os.getenv('SECRET_KEY') )
-            current_user = get_user_from_phone(data['user_id'])
-        except:
+            data = jwt.decode(token, str(os.getenv('SECRET_KEY')), algorithms=['HS256'] )
+            current_user = get_user_from_phone(data['id'])
+        except Exception as e:
+            print(e)
             return jsonify({
-                'message' : 'Token is invalid !!'
+                'message' : "error"
             }), 401
         # returns the current logged in users context to the routes
         return  f(current_user, *args, **kwargs)

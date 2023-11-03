@@ -7,7 +7,8 @@ import mysql.connector as sqltor
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, support_credentials=True, origins='*')
+
 # Database configurationhttp:
 
 

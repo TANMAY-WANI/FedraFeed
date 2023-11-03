@@ -14,7 +14,7 @@ def get_all_news():
 
 @newsBP.route('randnews/<int:index>', methods=['GET'])
 @mid.token_required
-def rand_news_route(index):
+def rand_news_route(curr,index):
     news=get_rand_news(index)
     return jsonify({'headlines':news})
     
